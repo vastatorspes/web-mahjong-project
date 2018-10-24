@@ -1,0 +1,15 @@
+#player-room{
+    margin-top:5vh;
+}
+#player-room>div{
+    padding: 20px;
+}
+#player-hand{
+    margin-top:10vh;
+}
+#player-hand>div{
+    padding: 20px;
+}
+#button-ready{
+    margin-top: 20px;
+}
