@@ -93,6 +93,7 @@ io.on('connection', (socket)=>{
     //endregion
     // end making room ----------------------------------------------------
     
+    ////----------------------- EVENT 3. LISTEN CHANGE CARD -----------------------
     socket.on('changeCard', (id, params, cards)=>{
         var roomState = rooms.returnCards(params.Room, params.Username, cards);
         console.log(JSON.stringify(roomState, undefined, 2));
@@ -101,8 +102,59 @@ io.on('connection', (socket)=>{
         playerHand = getPlayerHand(id,params.Room);
         socket.emit('dealCard', playerHand); // kasih kartu
         players.updatePlayerHand(id, playerHand); // update player hand
-        
     })
+    
+    
+    // not tested events---------------------------------------------------------
+    // region
+    ////----------------------- EVENT 4. LISTEN CHOOSE LACK -----------------------
+    socket.on('chooseLack', (id, room, lackColor)=>{
+        players.updatePlayerLack(id, lackColor);
+    })
+    
+    ////----------------------- EVENT 5. LISTEN DRAW CARD -----------------------
+    socket.on('drawCard', (id, room)=>{
+        var name = players.getPlayerName(id);
+        var playerHand = rooms.drawCard(name, room);
+        socket.emit('dealCard', playerHand); // tampilin kartu di frontend
+        players.updatePlayerHand(id, playerHand); // update kartu ke player data
+    })
+    
+    ////----------------------- EVENT 6. LISTEN THROW CARD -----------------------
+    socket.on('throwCard', (id, room, cardArr)=>{
+        var name = players.getPlayerName(id);
+        var playerHand = rooms.throwCard(name, room);
+        socket.emit('dealCard', playerHand); // tampilin kartu di frontend
+        players.updatePlayerHand(id, playerHand); // update kartu ke player data
+        rooms.changeTurn(name, room); //change turn
+    });
+    
+    ////----------------------- EVENT 7. LISTEN COMMAND -----------------------
+    socket.on('getCommand', (id, cmd, card)=>{
+        var obj = {command:cmd, card:card}
+        players.updatePlayerCommand(id, obj);
+        socket.emit('showCommand', obj); //kasih ke front end
+    })
+    
+    ////----------------------- EVENT 8. LISTEN SUCCESS COMMAND -----------------------
+    socket.on('onSuccess', (id, cmd, card, score)=>{
+        var name = players.getPlayerName(id);
+        players.updatePlayerScore(id, score);
+        rooms.changeTurn(name, room); //change turn
+    })
+    
+    ////----------------------- EVENT 9. LISTEN END GAME -----------------------
+    socket.on('endGame', (room, result)=>{
+        var player = players.getPlayerList(room);
+        var result = [];
+        player.forEach((p)=>{
+            var obj = {};
+            obj['name'] = p.name;
+            obj['score'] = p.score;
+            result.push(obj);
+        });
+    })
+    // endregion
     
     // on disconnect
     // region

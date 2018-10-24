@@ -36,7 +36,8 @@ class Rooms{
             playerHand.push(obj);
             currentDeck = currentDeck.slice(cards, currentDeck.length);
         });
-        var roomState = {roomname, players, currentDeck, playerHand}
+        var currentTurn = players[0];
+        var roomState = {roomname, players, currentDeck, playerHand, currentTurn}
         return roomState;
     }
     
@@ -65,7 +66,31 @@ class Rooms{
         }
         return room;
     }
-    
+    drawCard(name, room){
+        var room = this.getRoom(room);
+        var top = room.currentDeck[0]
+        room.currentDeck.slice(0,1); // buang kartu paling atas di deck
+        var playerHand = room.playerHand.find(x => x.name === name).hand;
+        playerHand.push(top); // kasih kartu ke player
+        return playerHand;
+    }
+    throwCard(name, room, card){
+        var room = this.getRoom(room);
+        var playerHand = room.playerHand.find(x => x.name === name).hand;
+        playerHand.slice(card,1); // buang card pada array itu
+        return playerHand;
+    }
+    changeTurn(name, room){
+        var room = this.getRoom(room);
+        var names = room.players;
+        var nameIndex = names.indexOf(name);
+        if(nameIndex === 3){
+            room.currentTurn = room.players[0];
+        }else{
+            room.currentTurn = room.players[nameIndex+1];
+        }
+        return room;
+    }
 }
 
 module.exports = {Rooms};

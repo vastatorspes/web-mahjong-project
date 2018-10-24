@@ -3,9 +3,12 @@ class Players{
         this.players = [];
     }
     
-    addPlayer(id, name, room, hand){
+    addPlayer(id, name, room, hand, command,score){
         var hand = [];
-        var player = {id, name, room, hand};
+        var lack = Number;
+        var command = {};
+        var score = 0;
+        var player = {id, name, room, hand, lack,command, score};
         this.players.push(player);
         return player;
     }
@@ -19,6 +22,19 @@ class Players{
         player.hand = hand;
     }
     
+    updatePlayerLack(id, lack){
+        var player = this.getPlayer(id);
+        player.lack = lack;
+    }
+    
+    updatePlayerCommand(id, command){
+        var player = this.getPlayer(id);
+        player.command = command;
+    }
+    updatePlayerScore(id, score){
+        var player = this.getPlayer(id);
+        player.score = score;
+    }
     removePlayer(id){
         var player = this.getPlayer(id);
         if (player){
@@ -37,6 +53,7 @@ class Players{
         var name= player.name;
         return name;
     }
+    
 }
 
 module.exports = {Players};
