@@ -16,12 +16,12 @@ var io = socketIO(server);
 var players = new Players();
 var rooms = new Rooms();
 
-/*var getPlayerHand = (id,room)=>{
+var getPlayerHand = (id,room)=>{
     var roomState = rooms.getRoom(room);
     var name = players.getPlayerName(id);
     var playerHand = roomState.playerHand.find((player)=>player.name === name).hand;
     return playerHand;
-}*/
+}
 
 
 app.use(express.static(publicPath));
@@ -85,11 +85,7 @@ io.on('connection', (socket)=>{
     });
     
     socket.on('requestCard', (id,room) =>{
-        var roomState = rooms.getRoom(room);
-        var name = players.getPlayerName(id);
-        var playerHand = roomState.playerHand.find((player)=>player.name === name).hand;
-        //return playerHand;
-        //playerHand = getPlayerHand(id,room);
+        playerHand = getPlayerHand(id,room);
         socket.emit('dealCard', playerHand); // kasih kartu
         players.updatePlayerHand(id, playerHand); // update player hand
         console.log(JSON.stringify(rooms, undefined, 2));
@@ -97,8 +93,7 @@ io.on('connection', (socket)=>{
     //endregion
     // end making room ----------------------------------------------------
     
-    //-------------- 10/24 --------------
-    /*socket.on('changeCard', (id, params, cards)=>{
+    socket.on('changeCard', (id, params, cards)=>{
         var roomState = rooms.returnCards(params.Room, params.Username, cards);
         console.log(JSON.stringify(roomState, undefined, 2));
         console.log('card returned')
@@ -107,8 +102,8 @@ io.on('connection', (socket)=>{
         socket.emit('dealCard', playerHand); // kasih kartu
         players.updatePlayerHand(id, playerHand); // update player hand
         
-    })*/
-    //-------------- 10/24 --------------
+    })
+    
     // on disconnect
     // region
     socket.on('disconnect', ()=>{

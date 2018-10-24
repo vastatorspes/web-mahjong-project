@@ -52,7 +52,7 @@ class Rooms{
     }
     
     //-------------- 10/24 --------------
-    /*returnCards(room, name, card){
+    returnCards(room, name, card){
         var room = this.rooms.find((r) => r.roomname === room);
         var playerHand = room.playerHand.find(x => x.name === name).hand;
         
@@ -64,8 +64,8 @@ class Rooms{
             room.currentDeck.splice(0,1)
         }
         return room;
-    }*/
-    //-------------- 10/24 --------------
+    }
+    
 }
 
 module.exports = {Rooms};

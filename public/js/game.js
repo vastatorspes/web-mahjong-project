@@ -56,9 +56,9 @@ socket.on('updatePlayerList', function(players){
 socket.on('disconnect', function(){
 });
 
-//-------------- 10/24 --------------
-/*$('#changeCard').click(function(){
+
+$('#changeCard').click(function(){
     var params = jQuery.deparam(window.location.search);
     socket.emit('changeCard',socket.id, params, [0,1,2]);
-});*/
-//-------------- 10/24 --------------
+});
+
