@@ -29,10 +29,10 @@ socket.on('connect', function(){
 });         
             // ----------------------- EVENT 2. LISTEN TO CARD DEALER -----------------------
             socket.on('initState', function(room){
-                $('#button-div').html("<button id='changeCard' onlick= 'changeCard()'>Change Card</button>")
+                $('#button-div').html("<button id='changeCard' class='btn btn-primary'>Change Card</button>")
                 socket.emit('requestCard', socket.id,room);
             });
-            
+        
             socket.on('dealCard', function(hand){
                 console.log(hand);
                 var params = jQuery.deparam(window.location.search);
@@ -68,11 +68,10 @@ $('#button-div').on("click", "button#changeCard",function(){
 socket.on('afterChange', function(currentTurn){
     var params = jQuery.deparam(window.location.search);
     if(params.Username === currentTurn){
-        console.log("my turn");
         if($('#drawCard').length >0){
             $('#drawCard').show();
         }else{
-            $('#button-div').html("<button id='drawCard'>Draw Card</button>")
+            $('#button-div').html("<button id='drawCard' class='btn btn-primary'>Draw Card</button>")
         }
     }
 })
@@ -86,7 +85,7 @@ $('#button-div').on("click", "button#drawCard",function(){
     if($('#throwCard').length >0){
         $('#throwCard').show();
     }else{
-        $('#button-div').html("<button id='throwCard'>Throw Card</button>")
+        $('#button-div').html("<button id='throwCard' class='btn btn-primary'>Throw Card</button>")
     }
 });
 
