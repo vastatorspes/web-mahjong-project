@@ -54,6 +54,7 @@ socket.on('updatePlayerList', function(players){
 });
 
 socket.on('disconnect', function(){
+    console.log('disconnect from server');
 });
 
 // ----------------------- EVENT 3. EMIT CHANGE CARD -----------------------

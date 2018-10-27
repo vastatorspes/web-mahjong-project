@@ -109,6 +109,7 @@ io.on('connection', (socket)=>{
             //----------------------- EVENT 4. EMIT AFTER CHANGE -----------------------
             io.to(params.Room).emit('afterChange', room.currentTurn);
             console.log(room.currentTurn);
+            room.changeCard = 0;
         }
     })
     
@@ -177,6 +178,7 @@ io.on('connection', (socket)=>{
         if(player){
             io.to(player.room).emit('updatePlayerList', players.getPlayerList(player.room))
         }
+        console.log('disconnected')
     });
     // endregion
     

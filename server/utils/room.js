@@ -69,8 +69,6 @@ class Rooms{
         return room;
     }
     
-    // belom ditest
-    // region
     drawCard(name, room){
         var room = this.getRoom(room);
         var top = room.currentDeck[0]
@@ -79,6 +77,7 @@ class Rooms{
         playerHand.push(top); // kasih kartu ke player
         return playerHand;
     }
+    
     throwCard(name, room, card){
         var room = this.getRoom(room);
         var playerHand = room.playerHand.find(x => x.name === name).hand;
@@ -97,7 +96,6 @@ class Rooms{
         }
         return room;
     }
-    //endregion
 }
 
 module.exports = {Rooms};
