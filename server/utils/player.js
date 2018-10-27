@@ -53,7 +53,11 @@ class Players{
         var name= player.name;
         return name;
     }
-    
+    getPlayerRoom(id){
+        var player = this.players.find((player)=>player.id === id);
+        var room= player.room;
+        return room;
+    }
 }
 
 module.exports = {Players};

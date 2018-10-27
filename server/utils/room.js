@@ -39,7 +39,8 @@ class Rooms{
         var currentTurn = players[0];
         var changeCard = 0;
         var chooseLack = 0;
-        var roomState = {roomname, players, currentDeck, playerHand, currentTurn, changeCard, chooseLack}
+        var roomField = [];
+        var roomState = {roomname, players, currentDeck, playerHand, currentTurn, changeCard, chooseLack, roomField}
         return roomState;
     }
     
@@ -83,6 +84,7 @@ class Rooms{
         var playerHand = room.playerHand.find(x => x.name === name).hand;
         var returnedCard = playerHand.find( c => c === card);
         playerHand.splice(playerHand.indexOf(returnedCard),1);
+        this.updateRoomField(room.roomname, {name, card})
         return playerHand;
     }
     changeTurn(name, room){
@@ -95,6 +97,11 @@ class Rooms{
             room.currentTurn = room.players[nameIndex+1];
         }
         return room;
+    }
+    
+    updateRoomField(roomname, field){
+        var room = this.getRoom(roomname).roomField;
+        return room.unshift(field);
     }
 }
 

@@ -134,6 +134,8 @@ io.on('connection', (socket)=>{
         var room = rooms.getRoom(room); // ambil room
         console.log(room.currentTurn);
         io.to(room.roomname).emit('afterChange', room.currentTurn);
+        //----------------------- EVENT 10. EMIT OTHERS THROW -----------------------
+        io.to(room.roomname).emit('othersThrow', socket.id, card);
     });
     
     
@@ -154,11 +156,17 @@ io.on('connection', (socket)=>{
     ////----------------------- EVENT 9. LISTEN SUCCESS COMMAND -----------------------
     socket.on('onSuccess', (id, cmd, card, score)=>{
         var name = players.getPlayerName(id);
+        var room = players.getPlayerRoom(id);
+        var fromName = rooms.getRoom(room).roomField[0].name;
+        
         players.updatePlayerScore(id, score);
         rooms.changeTurn(name, room); //change turn
+        
+        //----------------------- EVENT 11. EMIT OTHERS COMMAND -----------------------
+        io.to(room).emit('othersCommand',name, fromName, cmd, card, score);
     })
     
-    ////----------------------- EVENT 10. LISTEN END GAME -----------------------
+    ////----------------------- EVENT 12. LISTEN END GAME -----------------------
     socket.on('endGame', (room, result)=>{
         var player = players.getPlayerList(room);
         var result = [];
