@@ -95,55 +95,69 @@ io.on('connection', (socket)=>{
     
     ////----------------------- EVENT 3. LISTEN CHANGE CARD -----------------------
     socket.on('changeCard', (id, params, cards)=>{
+        var room = rooms.getRoom(params.Room); // ambil room
         var roomState = rooms.returnCards(params.Room, params.Username, cards);
-        console.log(JSON.stringify(roomState, undefined, 2));
+        /*console.log(JSON.stringify(roomState, undefined, 2));
         console.log('card returned')
-        console.log(cards);
+        console.log(cards);*/
+        room.changeCard++;
+        console.log(JSON.stringify(room, undefined, 2));
         playerHand = getPlayerHand(id,params.Room);
         socket.emit('dealCard', playerHand); // kasih kartu
         players.updatePlayerHand(id, playerHand); // update player hand
+        if(room.changeCard === 4){
+            //----------------------- EVENT 4. EMIT AFTER CHANGE -----------------------
+            io.to(params.Room).emit('afterChange', room.currentTurn);
+            console.log(room.currentTurn);
+        }
     })
     
-    
-    // not tested events---------------------------------------------------------
-    // region
-    ////----------------------- EVENT 4. LISTEN CHOOSE LACK -----------------------
-    socket.on('chooseLack', (id, room, lackColor)=>{
-        players.updatePlayerLack(id, lackColor);
-    })
-    
-    ////----------------------- EVENT 5. LISTEN DRAW CARD -----------------------
+    ////----------------------- EVENT 6. LISTEN DRAW CARD -----------------------
     socket.on('drawCard', (id, room)=>{
         var name = players.getPlayerName(id);
         var playerHand = rooms.drawCard(name, room);
         socket.emit('dealCard', playerHand); // tampilin kartu di frontend
         players.updatePlayerHand(id, playerHand); // update kartu ke player data
+        console.log(players.getPlayer(id))
     })
     
-    ////----------------------- EVENT 6. LISTEN THROW CARD -----------------------
-    socket.on('throwCard', (id, room, cardArr)=>{
+    ////----------------------- EVENT 7. LISTEN THROW CARD -----------------------
+    socket.on('throwCard', (id, room, card)=>{
         var name = players.getPlayerName(id);
-        var playerHand = rooms.throwCard(name, room);
+        var playerHand = rooms.throwCard(name, room, card);
         socket.emit('dealCard', playerHand); // tampilin kartu di frontend
         players.updatePlayerHand(id, playerHand); // update kartu ke player data
         rooms.changeTurn(name, room); //change turn
+        console.log(players.getPlayer(id))
+        
+        var room = rooms.getRoom(room); // ambil room
+        console.log(room.currentTurn);
+        io.to(room.roomname).emit('afterChange', room.currentTurn);
     });
     
-    ////----------------------- EVENT 7. LISTEN COMMAND -----------------------
+    
+    // not tested events---------------------------------------------------------
+    // region
+    ////----------------------- EVENT 5. LISTEN CHOOSE LACK -----------------------
+    socket.on('chooseLack', (id, room, lackColor)=>{
+        players.updatePlayerLack(id, lackColor);
+    })
+    
+    ////----------------------- EVENT 8. LISTEN COMMAND -----------------------
     socket.on('getCommand', (id, cmd, card)=>{
         var obj = {command:cmd, card:card}
         players.updatePlayerCommand(id, obj);
         socket.emit('showCommand', obj); //kasih ke front end
     })
     
-    ////----------------------- EVENT 8. LISTEN SUCCESS COMMAND -----------------------
+    ////----------------------- EVENT 9. LISTEN SUCCESS COMMAND -----------------------
     socket.on('onSuccess', (id, cmd, card, score)=>{
         var name = players.getPlayerName(id);
         players.updatePlayerScore(id, score);
         rooms.changeTurn(name, room); //change turn
     })
     
-    ////----------------------- EVENT 9. LISTEN END GAME -----------------------
+    ////----------------------- EVENT 10. LISTEN END GAME -----------------------
     socket.on('endGame', (room, result)=>{
         var player = players.getPlayerList(room);
         var result = [];

@@ -29,7 +29,8 @@ socket.on('connect', function(){
 });         
             // ----------------------- EVENT 2. LISTEN TO CARD DEALER -----------------------
             socket.on('initState', function(room){
-                socket.emit('requestCard', socket.id,room); 
+                $('#button-div').html("<button id='changeCard' onlick= 'changeCard()'>Change Card</button>")
+                socket.emit('requestCard', socket.id,room);
             });
             
             socket.on('dealCard', function(hand){
@@ -41,8 +42,7 @@ socket.on('connect', function(){
                 playerHand = hand;
                 console.log(playerHand);
             });
-            
-            
+
 // bikin tampilan masing2 player di room
 socket.on('updatePlayerList', function(players){
     console.log(players);
@@ -56,9 +56,43 @@ socket.on('updatePlayerList', function(players){
 socket.on('disconnect', function(){
 });
 
-
-$('#changeCard').click(function(){
+// ----------------------- EVENT 3. EMIT CHANGE CARD -----------------------
+$('#button-div').on("click", "button#changeCard",function(){
     var params = jQuery.deparam(window.location.search);
     socket.emit('changeCard',socket.id, params, playerHand.slice(0,3));
+    $('#changeCard').hide();
+});
+
+// ----------------------- EVENT 4. LISTEN AFTER CHANGE -----------------------
+socket.on('afterChange', function(currentTurn){
+    var params = jQuery.deparam(window.location.search);
+    if(params.Username === currentTurn){
+        console.log("my turn");
+        if($('#drawCard').length >0){
+            $('#drawCard').show();
+        }else{
+            $('#button-div').html("<button id='drawCard'>Draw Card</button>")
+        }
+    }
+})
+
+// ----------------------- EVENT 6. EMIT DRAW CARD -----------------------
+$('#button-div').on("click", "button#drawCard",function(){
+    var params = jQuery.deparam(window.location.search);
+    socket.emit('drawCard',socket.id, params.Room);
+    $('#drawCard').hide();
+    
+    if($('#throwCard').length >0){
+        $('#throwCard').show();
+    }else{
+        $('#button-div').html("<button id='throwCard'>Throw Card</button>")
+    }
+});
+
+// ----------------------- EVENT 7. EMIT THROW CARD -----------------------
+$('#button-div').on("click", "button#throwCard",function(){
+    var params = jQuery.deparam(window.location.search);
+    socket.emit('throwCard',socket.id, params.Room, playerHand[0]);
+    $('#throwCard').hide();
 });
 

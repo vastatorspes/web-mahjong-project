@@ -37,7 +37,9 @@ class Rooms{
             currentDeck = currentDeck.slice(cards, currentDeck.length);
         });
         var currentTurn = players[0];
-        var roomState = {roomname, players, currentDeck, playerHand, currentTurn}
+        var changeCard = 0;
+        var chooseLack = 0;
+        var roomState = {roomname, players, currentDeck, playerHand, currentTurn, changeCard, chooseLack}
         return roomState;
     }
     
@@ -80,7 +82,7 @@ class Rooms{
     throwCard(name, room, card){
         var room = this.getRoom(room);
         var playerHand = room.playerHand.find(x => x.name === name).hand;
-        var returnedCard = playerHand.find( c => c === card[i]);
+        var returnedCard = playerHand.find( c => c === card);
         playerHand.splice(playerHand.indexOf(returnedCard),1);
         return playerHand;
     }
