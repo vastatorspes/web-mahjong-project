@@ -52,20 +52,23 @@ class Rooms{
         return getroom;
     }
     
-    //-------------- 10/24 --------------
     returnCards(room, name, card){
         var room = this.rooms.find((r) => r.roomname === room);
         var playerHand = room.playerHand.find(x => x.name === name).hand;
         
         // balikin kartu ke deck
         for (var i=0; i < card.length; i++){
-            room.currentDeck.push(playerHand[card[i]-i]);
-            playerHand.splice(card[i]-i, 1);
+            var returnedCard = playerHand.find( c => c === card[i]);
+            room.currentDeck.push(returnedCard);
+            playerHand.splice(playerHand.indexOf(returnedCard),1);
             playerHand.push(room.currentDeck[0]) // ngasih kartu dari deck
             room.currentDeck.splice(0,1)
         }
         return room;
     }
+    
+    // belom ditest
+    // region
     drawCard(name, room){
         var room = this.getRoom(room);
         var top = room.currentDeck[0]
@@ -77,7 +80,8 @@ class Rooms{
     throwCard(name, room, card){
         var room = this.getRoom(room);
         var playerHand = room.playerHand.find(x => x.name === name).hand;
-        playerHand.slice(card,1); // buang card pada array itu
+        var returnedCard = playerHand.find( c => c === card[i]);
+        playerHand.splice(playerHand.indexOf(returnedCard),1);
         return playerHand;
     }
     changeTurn(name, room){
@@ -91,6 +95,7 @@ class Rooms{
         }
         return room;
     }
+    //endregion
 }
 
 module.exports = {Rooms};

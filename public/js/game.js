@@ -59,6 +59,6 @@ socket.on('disconnect', function(){
 
 $('#changeCard').click(function(){
     var params = jQuery.deparam(window.location.search);
-    socket.emit('changeCard',socket.id, params, [0,1,2]);
+    socket.emit('changeCard',socket.id, params, playerHand.slice(0,3));
 });
 
