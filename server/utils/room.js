@@ -70,10 +70,10 @@ class Rooms{
         return room;
     }
     
-    drawCard(name, room){
-        var room = this.getRoom(room);
+    drawCard(name, roomname){
+        var room = this.getRoom(roomname);
         var top = room.currentDeck[0]
-        room.currentDeck.slice(0,1); // buang kartu paling atas di deck
+        room.currentDeck.splice(0,1); // buang kartu paling atas di deck
         var playerHand = room.playerHand.find(x => x.name === name).hand;
         playerHand.push(top); // kasih kartu ke player
         return playerHand;

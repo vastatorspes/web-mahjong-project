@@ -11,3 +11,10 @@
 #player-hand>div{
     padding: 20px;
 }
+#log{
+    background-color: aliceblue;
+    padding-top: 20px;
+    margin-top: 25px;
+    height: 150px;
+    overflow-y: scroll;
+}

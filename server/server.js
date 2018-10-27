@@ -56,7 +56,7 @@ io.on('connection', (socket)=>{
         roomPlayer = players.getPlayerList(room).length; // ngambil ulang jumlah player
         
         //----------------------- EVENT 2. RETURN CALLBACK GAME START -----------------------
-        if(roomPlayer >= 4){
+        if(roomPlayer === 4){
             return callback('Room Ready');  
         }
         callback(); //gak ngasih apa-apa karna ga error
@@ -94,7 +94,7 @@ io.on('connection', (socket)=>{
     // end making room ----------------------------------------------------
     
     ////----------------------- EVENT 3. LISTEN CHANGE CARD -----------------------
-    socket.on('changeCard', (id, params, cards)=>{
+    socket.on('changeCard', (id, params, cards, callback)=>{
         var room = rooms.getRoom(params.Room); // ambil room
         var roomState = rooms.returnCards(params.Room, params.Username, cards);
         /*console.log(JSON.stringify(roomState, undefined, 2));
@@ -102,24 +102,48 @@ io.on('connection', (socket)=>{
         console.log(cards);*/
         room.changeCard++;
         console.log(JSON.stringify(room, undefined, 2));
-        playerHand = getPlayerHand(id,params.Room);
+        var playerHand = getPlayerHand(id,params.Room);
         socket.emit('dealCard', playerHand); // kasih kartu
         players.updatePlayerHand(id, playerHand); // update player hand
+        callback("you change "+cards+" to "+playerHand.slice(playerHand.length-3,playerHand.length));
         if(room.changeCard === 4){
             //----------------------- EVENT 4. EMIT AFTER CHANGE -----------------------
             io.to(params.Room).emit('afterChange', room.currentTurn);
-            console.log(room.currentTurn);
             room.changeCard = 0;
+            callback();
         }
+        console.log(JSON.stringify(rooms, undefined, 2));
+    })
+    ////----------------------- EVENT 5. LISTEN CHOOSE LACK -----------------------
+    socket.on('chooseLack', (id, roomname, lackColor, callback)=>{
+        var room = rooms.getRoom(roomname);
+        players.updatePlayerLack(id, lackColor);
+        callback("you choose lack "+lackColor);
+        room.chooseLack++;
+        if(room.chooseLack === 4){
+            //----------------------- EVENT 6. EMIT AFTER LACK -----------------------
+            io.to(roomname).emit('afterAction', room.currentTurn);
+            console.log(room.currentTurn);
+            console.log(players);
+            room.chooseLack = 0;
+            callback();
+        }
+        console.log(JSON.stringify(rooms, undefined, 2));
     })
     
     ////----------------------- EVENT 6. LISTEN DRAW CARD -----------------------
-    socket.on('drawCard', (id, room)=>{
+    socket.on('drawCard', (id, room, callback)=>{
         var name = players.getPlayerName(id);
         var playerHand = rooms.drawCard(name, room);
         socket.emit('dealCard', playerHand); // tampilin kartu di frontend
         players.updatePlayerHand(id, playerHand); // update kartu ke player data
         console.log(players.getPlayer(id))
+        console.log(JSON.stringify(rooms, undefined, 2));
+        if (callback) {
+            callback("you drew "+playerHand[playerHand.length-1]);
+        }
+        callback();
+        
     })
     
     ////----------------------- EVENT 7. LISTEN THROW CARD -----------------------
@@ -129,22 +153,17 @@ io.on('connection', (socket)=>{
         socket.emit('dealCard', playerHand); // tampilin kartu di frontend
         players.updatePlayerHand(id, playerHand); // update kartu ke player data
         rooms.changeTurn(name, room); //change turn
-        console.log(players.getPlayer(id))
         
         var room = rooms.getRoom(room); // ambil room
         console.log(room.currentTurn);
-        io.to(room.roomname).emit('afterChange', room.currentTurn);
+        io.to(room.roomname).emit('afterAction', room.currentTurn);
         //----------------------- EVENT 10. EMIT OTHERS THROW -----------------------
-        io.to(room.roomname).emit('othersThrow', socket.id, card);
+        io.to(room.roomname).emit('othersThrow', name, card);
     });
     
     
     // not tested events---------------------------------------------------------
     // region
-    ////----------------------- EVENT 5. LISTEN CHOOSE LACK -----------------------
-    socket.on('chooseLack', (id, room, lackColor)=>{
-        players.updatePlayerLack(id, lackColor);
-    })
     
     ////----------------------- EVENT 8. LISTEN COMMAND -----------------------
     socket.on('getCommand', (id, cmd, card)=>{

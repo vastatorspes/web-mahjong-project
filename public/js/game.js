@@ -60,12 +60,29 @@ socket.on('disconnect', function(){
 // ----------------------- EVENT 3. EMIT CHANGE CARD -----------------------
 $('#button-div').on("click", "button#changeCard",function(){
     var params = jQuery.deparam(window.location.search);
-    socket.emit('changeCard',socket.id, params, playerHand.slice(0,3));
+    socket.emit('changeCard',socket.id, params, playerHand.slice(0,3), function(log){
+        jQuery('#log').prepend(jQuery('<p></p>').text(log))
+    });
     $('#changeCard').hide();
 });
 
 // ----------------------- EVENT 4. LISTEN AFTER CHANGE -----------------------
-socket.on('afterChange', function(currentTurn){
+socket.on('afterChange', function(){
+    var params = jQuery.deparam(window.location.search);
+    $('#button-div').html("<button id='chooseLack' class='btn btn-primary'>ChooseLack</button>")
+})
+
+// ----------------------- EVENT 5. EMIT CHOOSE LACK -----------------------
+$('#button-div').on("click", "button#chooseLack",function(){
+    var params = jQuery.deparam(window.location.search);
+    socket.emit('chooseLack',socket.id, params.Room, 1, function(log){
+        jQuery('#log').prepend(jQuery('<p></p>').text(log))
+    });
+    $('#chooseLack').hide();
+});
+
+
+socket.on('afterAction', function(currentTurn){
     var params = jQuery.deparam(window.location.search);
     if(params.Username === currentTurn){
         if($('#drawCard').length >0){
@@ -79,7 +96,9 @@ socket.on('afterChange', function(currentTurn){
 // ----------------------- EVENT 6. EMIT DRAW CARD -----------------------
 $('#button-div').on("click", "button#drawCard",function(){
     var params = jQuery.deparam(window.location.search);
-    socket.emit('drawCard',socket.id, params.Room);
+    socket.emit('drawCard',socket.id, params.Room, function(log){
+        jQuery('#log').prepend(jQuery('<p></p>').text(log))
+    });
     $('#drawCard').hide();
     
     if($('#throwCard').length >0){
@@ -96,3 +115,7 @@ $('#button-div').on("click", "button#throwCard",function(){
     $('#throwCard').hide();
 });
 
+// ----------------------- EVENT 10. LISTEN OTHERS THROW -----------------------
+socket.on('othersThrow', (name, card)=>{
+    jQuery('#log').prepend(jQuery('<p></p>').text("player: "+name+" discarded a card "+ card))
+})
