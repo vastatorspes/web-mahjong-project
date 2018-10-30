@@ -33,7 +33,7 @@ io.on('connection', (socket)=>{
     socket.on('playerLogin',(room, callback)=>{
         var roomPlayer = players.getPlayerList(room).length;
         if(roomPlayer >= 4){
-            callback('Room is Full From Login')
+            callback('Room is Full')
         }
         callback();
     });
@@ -46,7 +46,7 @@ io.on('connection', (socket)=>{
         room = params.Room;
         var roomPlayer = players.getPlayerList(room).length;
         if(roomPlayer >= 4){ //validasi room pentuh waktu maksa masukin url
-            return callback('Room is Full from Join');
+            return callback('Room is Full');
         }
         
         console.log('New Player Join');
@@ -131,7 +131,7 @@ io.on('connection', (socket)=>{
         console.log(JSON.stringify(rooms, undefined, 2));
     })
     
-    ////----------------------- EVENT 6. LISTEN DRAW CARD -----------------------
+    ////----------------------- EVENT 7. LISTEN DRAW CARD -----------------------
     socket.on('drawCard', (id, room, callback)=>{
         var name = players.getPlayerName(id);
         var playerHand = rooms.drawCard(name, room);
@@ -146,7 +146,7 @@ io.on('connection', (socket)=>{
         
     })
     
-    ////----------------------- EVENT 7. LISTEN THROW CARD -----------------------
+    ////----------------------- EVENT 8. LISTEN THROW CARD -----------------------
     socket.on('throwCard', (id, room, card)=>{
         var name = players.getPlayerName(id);
         var playerHand = rooms.throwCard(name, room, card);
@@ -157,7 +157,7 @@ io.on('connection', (socket)=>{
         var room = rooms.getRoom(room); // ambil room
         console.log(room.currentTurn);
         io.to(room.roomname).emit('afterAction', room.currentTurn);
-        //----------------------- EVENT 10. EMIT OTHERS THROW -----------------------
+        //----------------------- EVENT 11. EMIT OTHERS THROW -----------------------
         io.to(room.roomname).emit('othersThrow', name, card);
     });
     
@@ -165,14 +165,14 @@ io.on('connection', (socket)=>{
     // not tested events---------------------------------------------------------
     // region
     
-    ////----------------------- EVENT 8. LISTEN COMMAND -----------------------
+    ////----------------------- EVENT 9. LISTEN COMMAND -----------------------
     socket.on('getCommand', (id, cmd, card)=>{
         var obj = {command:cmd, card:card}
         players.updatePlayerCommand(id, obj);
-        socket.emit('showCommand', obj); //kasih ke front end
+        //socket.emit('showCommand', obj); //kasih ke front end
     })
     
-    ////----------------------- EVENT 9. LISTEN SUCCESS COMMAND -----------------------
+    ////----------------------- EVENT 10. LISTEN SUCCESS COMMAND -----------------------
     socket.on('onSuccess', (id, cmd, card, score)=>{
         var name = players.getPlayerName(id);
         var room = players.getPlayerRoom(id);
@@ -181,11 +181,11 @@ io.on('connection', (socket)=>{
         players.updatePlayerScore(id, score);
         rooms.changeTurn(name, room); //change turn
         
-        //----------------------- EVENT 11. EMIT OTHERS COMMAND -----------------------
+        //----------------------- EVENT 12. EMIT OTHERS COMMAND -----------------------
         io.to(room).emit('othersCommand',name, fromName, cmd, card, score);
     })
     
-    ////----------------------- EVENT 12. LISTEN END GAME -----------------------
+    ////----------------------- EVENT 13. LISTEN END GAME -----------------------
     socket.on('endGame', (room, result)=>{
         var player = players.getPlayerList(room);
         var result = [];

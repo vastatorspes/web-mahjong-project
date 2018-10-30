@@ -43,20 +43,6 @@ socket.on('connect', function(){
                 console.log(playerHand);
             });
 
-// bikin tampilan masing2 player di room
-socket.on('updatePlayerList', function(players){
-    console.log(players);
-    jQuery('#player-room').empty();
-    players.forEach(function(player){
-        jQuery('#player-room').append(jQuery('<div></div>').addClass('w3-card')
-        .append(jQuery('<h3></h3>').text(player.name)))
-    });
-});
-
-socket.on('disconnect', function(){
-    console.log('disconnect from server');
-});
-
 // ----------------------- EVENT 3. EMIT CHANGE CARD -----------------------
 $('#button-div').on("click", "button#changeCard",function(){
     var params = jQuery.deparam(window.location.search);
@@ -81,7 +67,7 @@ $('#button-div').on("click", "button#chooseLack",function(){
     $('#chooseLack').hide();
 });
 
-
+// ----------------------- EVENT 6. LISTEN AFTER LACK -----------------------
 socket.on('afterAction', function(currentTurn){
     var params = jQuery.deparam(window.location.search);
     if(params.Username === currentTurn){
@@ -93,7 +79,7 @@ socket.on('afterAction', function(currentTurn){
     }
 })
 
-// ----------------------- EVENT 6. EMIT DRAW CARD -----------------------
+// ----------------------- EVENT 7. EMIT DRAW CARD -----------------------
 $('#button-div').on("click", "button#drawCard",function(){
     var params = jQuery.deparam(window.location.search);
     socket.emit('drawCard',socket.id, params.Room, function(log){
@@ -108,14 +94,29 @@ $('#button-div').on("click", "button#drawCard",function(){
     }
 });
 
-// ----------------------- EVENT 7. EMIT THROW CARD -----------------------
+// ----------------------- EVENT 8. EMIT THROW CARD -----------------------
 $('#button-div').on("click", "button#throwCard",function(){
     var params = jQuery.deparam(window.location.search);
     socket.emit('throwCard',socket.id, params.Room, playerHand[0]);
     $('#throwCard').hide();
 });
 
-// ----------------------- EVENT 10. LISTEN OTHERS THROW -----------------------
+// ----------------------- EVENT 11. LISTEN OTHERS THROW -----------------------
 socket.on('othersThrow', (name, card)=>{
     jQuery('#log').prepend(jQuery('<p></p>').text("player: "+name+" discarded a card "+ card))
 })
+
+
+// bikin tampilan masing2 player di room
+socket.on('updatePlayerList', function(players){
+    console.log(players);
+    jQuery('#player-room').empty();
+    players.forEach(function(player){
+        jQuery('#player-room').append(jQuery('<div></div>').addClass('w3-card')
+        .append(jQuery('<h3></h3>').text(player.name)))
+    });
+});
+
+socket.on('disconnect', function(){
+    console.log('disconnect from server');
+});
