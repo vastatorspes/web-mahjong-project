@@ -56,13 +56,16 @@ io.on('connection', (socket)=>{
         
         console.log('New Player Join');
         socket.join(room); // join room
+        
         id = username;
         players.addPlayer(id, username, room); // setiap player yang join ditambahin ke arr player
-        io.to(room).emit('updatePlayerList', players.getPlayerList(room)) // update div nya player
+        var playerList = rooms.getPlayerNames(players, room);
+        io.to(room).emit('updatePlayerList', playerList); // update div nya player
         roomPlayer = players.getPlayerList(room).length; // ngambil ulang jumlah player
         
         console.log(JSON.stringify(players,undefined,2))
         console.log(roomPlayer)
+        console.log(playerList)
         //----------------------- EVENT 2. RETURN CALLBACK GAME START -----------------------
         if(roomPlayer === 4){
             return callback('Room Ready');  
@@ -209,9 +212,11 @@ io.on('connection', (socket)=>{
     // on disconnect
     // region
     socket.on('disconnect', ()=>{
+        var playerRoom = players.getPlayerRoom(id);
         var player = players.removePlayer(id);
+        var playerList = rooms.getPlayerNames(players, playerRoom);
         if(player){
-            io.to(player.room).emit('updatePlayerList', players.getPlayerList(player.room))
+            io.to(player.room).emit('updatePlayerList', playerList);
         }
         console.log('disconnected')
     });

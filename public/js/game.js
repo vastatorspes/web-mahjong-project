@@ -118,9 +118,9 @@ socket.on('othersThrow', (name, card)=>{
 socket.on('updatePlayerList', function(players){
     console.log(players);
     jQuery('#player-room').empty();
-    players.forEach(function(player){
+    players.forEach(function(name){
         jQuery('#player-room').append(jQuery('<div></div>').addClass('w3-card')
-        .append(jQuery('<h3></h3>').text(player.name)))
+        .append(jQuery('<h3></h3>').text(name)))
     });
 });
 

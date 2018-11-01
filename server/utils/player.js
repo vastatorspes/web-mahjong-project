@@ -57,8 +57,10 @@ class Players{
     }
     getPlayerRoom(id){
         var player = this.players.find((player)=>player.id === id);
-        var room= player.room;
-        return room;
+        if(player){
+            var room= player.room;
+            return room;            
+        }
     }
 }
 
