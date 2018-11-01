@@ -50,8 +50,10 @@ class Players{
     
     getPlayerName(id){
         var player = this.players.find((player)=>player.id === id);
-        var name= player.name;
-        return name;
+        if(player){
+            var name= player.name;
+            return name;
+        }
     }
     getPlayerRoom(id){
         var player = this.players.find((player)=>player.id === id);

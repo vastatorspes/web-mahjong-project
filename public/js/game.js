@@ -13,6 +13,10 @@ socket.on('connect', function(){
             window.location.href = '/';
             
         }
+        else if(message === 'Username already taken'){
+            alert(message);
+            window.location.href = '/';
+        }
         // ----------------------- EVENT 2. EMIT GAME START -----------------------
         else if(message === 'Room Ready'){                             
             var params = jQuery.deparam(window.location.search);

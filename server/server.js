@@ -45,6 +45,10 @@ io.on('connection', (socket)=>{
     socket.on('join', (params,callback)=>{
         username = params.Username;
         room = params.Room;
+        existName = players.getPlayerName(username);
+        if(existName){
+            return callback("Username already taken")
+        }
         var roomPlayer = players.getPlayerList(room).length;
         if(roomPlayer >= 4){ //validasi room pentuh waktu maksa masukin url
             return callback('Room is Full');
@@ -52,7 +56,7 @@ io.on('connection', (socket)=>{
         
         console.log('New Player Join');
         socket.join(room); // join room
-        id = params.Username;
+        id = username;
         players.addPlayer(id, username, room); // setiap player yang join ditambahin ke arr player
         io.to(room).emit('updatePlayerList', players.getPlayerList(room)) // update div nya player
         roomPlayer = players.getPlayerList(room).length; // ngambil ulang jumlah player
