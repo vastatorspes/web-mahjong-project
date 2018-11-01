@@ -41,6 +41,7 @@ io.on('connection', (socket)=>{
     
     // ----------------------- EVENT 1. LISTEN JOIN ROOM -----------------------
     //region
+    var id;
     socket.on('join', (params,callback)=>{
         username = params.Username;
         room = params.Room;
@@ -51,10 +52,13 @@ io.on('connection', (socket)=>{
         
         console.log('New Player Join');
         socket.join(room); // join room
-        players.addPlayer(socket.id, username, room); // setiap player yang join ditambahin ke arr player
+        id = params.Username;
+        players.addPlayer(id, username, room); // setiap player yang join ditambahin ke arr player
         io.to(room).emit('updatePlayerList', players.getPlayerList(room)) // update div nya player
         roomPlayer = players.getPlayerList(room).length; // ngambil ulang jumlah player
         
+        console.log(JSON.stringify(players,undefined,2))
+        console.log(roomPlayer)
         //----------------------- EVENT 2. RETURN CALLBACK GAME START -----------------------
         if(roomPlayer === 4){
             return callback('Room Ready');  
@@ -69,7 +73,7 @@ io.on('connection', (socket)=>{
     //region
     socket.on('startGame', (params, callback)=>{
         // ngambil nama player pada room tersebut
-        var names = rooms.getPlayerNames(players, params.Room); // player = seluruh player yang ada
+        var names = rooms.getPlayerNames(players, params.Room); // players = seluruh player yang ada
         if (names.length === 4){
             rooms.addRoom(params.Room, names);
             //console.log(JSON.stringify(rooms, undefined, 2));
@@ -79,7 +83,7 @@ io.on('connection', (socket)=>{
             // ----------------------- EVENT 2. EMIT CARD DEALER -----------------------
             
             io.to(params.Room).emit('initState', room.roomname);
-            return callback(room.players);  
+            return callback(room.players); //player names 
         }
         callback();
     });
@@ -201,7 +205,7 @@ io.on('connection', (socket)=>{
     // on disconnect
     // region
     socket.on('disconnect', ()=>{
-        var player = players.removePlayer(socket.id);
+        var player = players.removePlayer(id);
         if(player){
             io.to(player.room).emit('updatePlayerList', players.getPlayerList(player.room))
         }

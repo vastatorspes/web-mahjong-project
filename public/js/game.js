@@ -8,9 +8,10 @@ socket.on('connect', function(){
     var params = jQuery.deparam(window.location.search);
     // ----------------------- EVENT 1. EMIT JOIN ROOM -----------------------
     socket.emit('join', params, function(message){
-        if(message === 'Room is Full from Join'){
+        if(message === 'Room is Full'){
             alert(message);
             window.location.href = '/';
+            
         }
         // ----------------------- EVENT 2. EMIT GAME START -----------------------
         else if(message === 'Room Ready'){                             
@@ -23,14 +24,16 @@ socket.on('connect', function(){
                         .append(jQuery('<h3></h3>').text(name)));
                     });
                 }
+                console.log('startGame')
             });
         }
     });
 });         
             // ----------------------- EVENT 2. LISTEN TO CARD DEALER -----------------------
             socket.on('initState', function(room){
+                var params = jQuery.deparam(window.location.search);
                 $('#button-div').html("<button id='changeCard' class='btn btn-primary'>Change Card</button>")
-                socket.emit('requestCard', socket.id,room);
+                socket.emit('requestCard', params.Username,room);
             });
         
             socket.on('dealCard', function(hand){
@@ -46,7 +49,7 @@ socket.on('connect', function(){
 // ----------------------- EVENT 3. EMIT CHANGE CARD -----------------------
 $('#button-div').on("click", "button#changeCard",function(){
     var params = jQuery.deparam(window.location.search);
-    socket.emit('changeCard',socket.id, params, playerHand.slice(0,3), function(log){
+    socket.emit('changeCard',params.Username, params, playerHand.slice(0,3), function(log){
         jQuery('#log').prepend(jQuery('<p></p>').text(log))
     });
     $('#changeCard').hide();
@@ -61,7 +64,7 @@ socket.on('afterChange', function(){
 // ----------------------- EVENT 5. EMIT CHOOSE LACK -----------------------
 $('#button-div').on("click", "button#chooseLack",function(){
     var params = jQuery.deparam(window.location.search);
-    socket.emit('chooseLack',socket.id, params.Room, 1, function(log){
+    socket.emit('chooseLack',params.Username, params.Room, 1, function(log){
         jQuery('#log').prepend(jQuery('<p></p>').text(log))
     });
     $('#chooseLack').hide();
@@ -70,7 +73,7 @@ $('#button-div').on("click", "button#chooseLack",function(){
 // ----------------------- EVENT 6. LISTEN AFTER LACK -----------------------
 socket.on('afterAction', function(currentTurn){
     var params = jQuery.deparam(window.location.search);
-    if(params.Username === currentTurn){
+    if(params.Username === currentTurn){ // ini bukan socket.id
         if($('#drawCard').length >0){
             $('#drawCard').show();
         }else{
@@ -82,7 +85,7 @@ socket.on('afterAction', function(currentTurn){
 // ----------------------- EVENT 7. EMIT DRAW CARD -----------------------
 $('#button-div').on("click", "button#drawCard",function(){
     var params = jQuery.deparam(window.location.search);
-    socket.emit('drawCard',socket.id, params.Room, function(log){
+    socket.emit('drawCard',params.Username, params.Room, function(log){
         jQuery('#log').prepend(jQuery('<p></p>').text(log))
     });
     $('#drawCard').hide();
@@ -97,7 +100,7 @@ $('#button-div').on("click", "button#drawCard",function(){
 // ----------------------- EVENT 8. EMIT THROW CARD -----------------------
 $('#button-div').on("click", "button#throwCard",function(){
     var params = jQuery.deparam(window.location.search);
-    socket.emit('throwCard',socket.id, params.Room, playerHand[0]);
+    socket.emit('throwCard',params.Username, params.Room, playerHand[0]);
     $('#throwCard').hide();
 });
 
