@@ -70,12 +70,7 @@ class Rooms{
         return room;
     }
 
-    getTopCard(roomname){
-        var room = this.getRoom(roomname);
-        var top = room.currentDeck[0];
-        return top
-    }
-
+    
     drawCard(name, roomname){
         var room = this.getRoom(roomname);
         var top = room.currentDeck[0];
