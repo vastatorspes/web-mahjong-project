@@ -133,9 +133,9 @@ io.on('connection', (socket)=>{
         room.chooseLack++;
         if(room.chooseLack === 4){
             //----------------------- EVENT 6. EMIT AFTER LACK -----------------------
-            io.to(roomname).emit('afterAction', room.currentTurn);
-            console.log(room.currentTurn);
-            console.log(players);
+            //io.to(roomname).emit('afterAction', room.currentTurn);
+            // console.log(room.currentTurn);
+            // console.log(players);
             room.chooseLack = 0;
             callback();
         }
@@ -145,11 +145,12 @@ io.on('connection', (socket)=>{
     ////----------------------- EVENT 7. LISTEN DRAW CARD -----------------------
     socket.on('drawCard', (id, room, callback)=>{
         var name = players.getPlayerName(id);
+        var card = rooms.getTopCard(room);
         var playerHand = rooms.drawCard(name, room);
-        socket.emit('dealCard', playerHand); // tampilin kartu di frontend
+        socket.emit('dealCard', card); // tampilin kartu di frontend
         players.updatePlayerHand(id, playerHand); // update kartu ke player data
-        console.log(players.getPlayer(id))
-        console.log(JSON.stringify(rooms, undefined, 2));
+        // console.log(players.getPlayer(id))
+        // console.log(JSON.stringify(rooms, undefined, 2));
         if (callback) {
             callback("you drew "+playerHand[playerHand.length-1]);
         }
@@ -167,7 +168,7 @@ io.on('connection', (socket)=>{
         
         var room = rooms.getRoom(room); // ambil room
         console.log(room.currentTurn);
-        io.to(room.roomname).emit('afterAction', room.currentTurn);
+        //io.to(room.roomname).emit('afterAction', room.currentTurn);
         //----------------------- EVENT 11. EMIT OTHERS THROW -----------------------
         io.to(room.roomname).emit('othersThrow', name, card);
     });
