@@ -120,6 +120,7 @@ io.on('connection', (socket)=>{
         if(room.changeCard === 4){
             //----------------------- EVENT 4. EMIT AFTER CHANGE -----------------------
             io.to(params.Room).emit('afterChange', room.currentTurn);
+            var returnedCard = rooms.returnChangeCard(params.Room);
             room.changeCard = 0;
             callback();
         }

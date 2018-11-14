@@ -1,4 +1,5 @@
 var card = require('./card.js');
+var {cardChanger} = require('./logic.js');
 
 class Rooms{
     constructor(){
@@ -40,7 +41,8 @@ class Rooms{
         var changeCard = 0;
         var chooseLack = 0;
         var roomField = [];
-        var roomState = {roomname, players, currentDeck, playerHand, currentTurn, changeCard, chooseLack, roomField}
+        var roomChangeCard = [];
+        var roomState = {roomname, players, currentDeck, playerHand, currentTurn, changeCard, chooseLack, roomField, roomChangeCard}
         return roomState;
     }
     
@@ -59,15 +61,28 @@ class Rooms{
         var room = this.rooms.find((r) => r.roomname === room);
         var playerHand = room.playerHand.find(x => x.name === name).hand;
         
-        // balikin kartu ke deck
         for (var i=0; i < card.length; i++){
             var returnedCard = playerHand.find( c => c === card[i]);
-            room.currentDeck.push(returnedCard);
             playerHand.splice(playerHand.indexOf(returnedCard),1);
-            playerHand.push(room.currentDeck[0]) // ngasih kartu dari deck
-            room.currentDeck.splice(0,1)
         }
+        room.roomChangeCard.push({name,card})
         return room;
+    }
+
+    returnChangeCard(room){
+        var room = this.rooms.find((r) => r.roomname === room);
+        var players = room.players;
+        var changeCard = room.roomChangeCard;
+        var playerTurn = room.playerTurn;
+        var returnedCard = cardChanger(changeCard, playerTurn);
+        players.forEach((player)=>{
+            var playerHand = room.playerHand.find(x => x.name === player).hand;
+            var addPlayerHand = returnedCard.find(x => x.name === player).card;
+            addPlayerHand.forEach((card)=>{
+                playerHand.push(card);                
+            })
+        });
+        return room
     }
 
     getTopCard(roomname){
