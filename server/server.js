@@ -101,6 +101,7 @@ io.on('connection', (socket)=>{
         socket.emit('dealCard', playerHand); // kasih kartu
         players.updatePlayerHand(id, playerHand); // update player hand
         console.log(JSON.stringify(rooms, undefined, 2));
+        console.log("requested")
     });
     //endregion
     // end making room ----------------------------------------------------
@@ -108,24 +109,29 @@ io.on('connection', (socket)=>{
     ////----------------------- EVENT 3. LISTEN CHANGE CARD -----------------------
     socket.on('changeCard', (id, params, cards, callback)=>{
         var room = rooms.getRoom(params.Room); // ambil room
-        var roomState = rooms.returnCards(params.Room, params.Username, cards);
-        /*console.log(JSON.stringify(roomState, undefined, 2));
-        console.log('card returned')
-        console.log(cards);*/
+        var roomState = rooms.returnCards(params.Room, id, cards);
+        //console.log(JSON.stringify(roomState, undefined, 2));
+        // console.log('card returned')
+        // console.log(cards);
         room.changeCard++;
         console.log(JSON.stringify(room, undefined, 2));
         var playerHand = getPlayerHand(id,params.Room);
         socket.emit('dealCard', playerHand); // kasih kartu
         players.updatePlayerHand(id, playerHand); // update player hand
-        callback("you change "+cards+" to "+playerHand.slice(playerHand.length-3,playerHand.length));
+        //callback("you change "+cards+" to "+playerHand.slice(playerHand.length-3,playerHand.length));
+        callback("you change "+cards);
         if(room.changeCard === 4){
             //----------------------- EVENT 4. EMIT AFTER CHANGE -----------------------
             io.to(params.Room).emit('afterChange', room.currentTurn);
+            var returnedCard = rooms.returnChangeCard(params.Room);
+            // console.log(JSON.stringify(returnedCard, undefined,2));
             room.changeCard = 0;
+            console.log("changecard")
             callback();
         }
-        console.log(JSON.stringify(rooms, undefined, 2));
+        //console.log(JSON.stringify(rooms, undefined, 2));
     })
+
     ////----------------------- EVENT 5. LISTEN CHOOSE LACK -----------------------
     socket.on('chooseLack', (id, roomname, lackColor, callback)=>{
         var room = rooms.getRoom(roomname);
@@ -155,7 +161,6 @@ io.on('connection', (socket)=>{
             callback("you drew "+playerHand[playerHand.length-1]);
         }
         callback();
-        
     })
     
     ////----------------------- EVENT 8. LISTEN THROW CARD -----------------------

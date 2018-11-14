@@ -63,6 +63,7 @@ $('#button-div').on("click", "button#changeCard",function(){
 socket.on('afterChange', function(){
     var params = jQuery.deparam(window.location.search);
     $('#button-div').html("<button id='chooseLack' class='btn btn-primary'>ChooseLack</button>")
+    socket.emit('requestCard', params.Username, params.Room);
 })
 
 // ----------------------- EVENT 5. EMIT CHOOSE LACK -----------------------
