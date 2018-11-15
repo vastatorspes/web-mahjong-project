@@ -38,4 +38,7 @@ var cardChanger = (cards, turn) =>{
     return changedCard
 }
 
+var checkCommand = (hand, field) =>{
+    
+}
 module.exports.cardChanger = cardChanger;
