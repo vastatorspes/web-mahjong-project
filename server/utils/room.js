@@ -42,7 +42,7 @@ class Rooms{
         var changeCard = 0;
         var chooseLack = 0;
         var roomField = [];
-        var roomChangeCard= [];
+        var roomChangeCard = [];
         var roomState = {roomname, players, currentDeck, playerHand, currentTurn, changeCard, chooseLack, roomField, roomChangeCard, playerTurn}
         return roomState;
     }
@@ -85,7 +85,13 @@ class Rooms{
         });
         return room
     }
-    
+
+    getTopCard(roomname){
+        var room = this.getRoom(roomname);
+        var top = room.currentDeck[0];
+        return top
+    }
+
     drawCard(name, roomname){
         var room = this.getRoom(roomname);
         var top = room.currentDeck[0];

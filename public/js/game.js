@@ -82,6 +82,7 @@ socket.on('afterAction', function(currentTurn){
     var params = jQuery.deparam(window.location.search);
     $('#chooseLack').hide();
     $('#throwCard').hide();
+
     if(params.Username === currentTurn){ // ini bukan socket.id
         if($('#drawCard').length >0){
             $('#drawCard').show();
@@ -116,6 +117,12 @@ $('#button-div').on("click", "button#throwCard",function(){
 // ----------------------- EVENT 11. LISTEN OTHERS THROW -----------------------
 socket.on('othersThrow', (name, card)=>{
     jQuery('#log').prepend(jQuery('<p></p>').text("player: "+name+" discarded a card "+ card))
+
+    // ----------------------- EVENT 9. GET COMMAND-----------------------
+    var params = jQuery.deparam(window.location.search);
+    socket.emit('getCommand', params.Username, params.Roomm, function(log){
+        jQuery('#log').prepend(jQuery('<p></p>').text(log))
+    });
 })
 
 

@@ -7,7 +7,7 @@ class Players{
         var hand = [];
         var lack = Number;
         var door = [];
-        var command = {};
+        var command = [];
         var score = 0;
         var player = {id, name, room, hand, lack, command, door, score};
         this.players.push(player);
@@ -61,6 +61,14 @@ class Players{
         if(player){
             var room= player.room;
             return room;            
+        }
+    }
+
+    getPlayerHand(id){
+        var player = this.players.find((player)=>player.id === id);
+        if(player){
+            var hand = player.hand;
+            return hand;
         }
     }
 }
