@@ -38,6 +38,7 @@ socket.on('connect', function(){
                 var params = jQuery.deparam(window.location.search);
                 $('#button-div').html("<button id='changeCard' class='btn btn-primary'>Change Card</button>")
                 socket.emit('requestCard', params.Username,room);
+                socket.emit('cdChangeCard', params.Username,room);
             });
         
             socket.on('dealCard', function(hand){
@@ -64,6 +65,7 @@ socket.on('afterChange', function(){
     var params = jQuery.deparam(window.location.search);
     $('#button-div').html("<button id='chooseLack' class='btn btn-primary'>ChooseLack</button>")
     socket.emit('requestCard', params.Username, params.Room);
+    socket.emit('cdChooseLack', params.Username,params.Room);
 })
 
 // ----------------------- EVENT 5. EMIT CHOOSE LACK -----------------------
@@ -78,6 +80,8 @@ $('#button-div').on("click", "button#chooseLack",function(){
 // ----------------------- EVENT 6. LISTEN AFTER LACK -----------------------
 socket.on('afterAction', function(currentTurn){
     var params = jQuery.deparam(window.location.search);
+    $('#chooseLack').hide();
+    $('#throwCard').hide();
     if(params.Username === currentTurn){ // ini bukan socket.id
         if($('#drawCard').length >0){
             $('#drawCard').show();

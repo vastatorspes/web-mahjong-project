@@ -10,24 +10,31 @@ var cardChanger = (cards, turn) =>{
     var p3Card = cards.find(c => c.name === turn3).card;
     var p4Card = cards.find(c => c.name === turn4).card;
     
-    var changedCard = [
-        {
-            "name": turn1,
-            "card": p2Card
-        },
-        {
-            "name": turn2,
-            "card": p3Card
-        },
-        {
-            "name": turn3,
-            "card": p4Card
-        },
-        {
-            "name": turn4,
-            "card": p1Card
-        }
-    ]
+    var rand = Math.floor(Math.random() * 3);
+    if(rand === 0){
+        var changedCard = [
+            {"name": turn1, "card": p4Card},
+            {"name": turn2, "card": p1Card},
+            {"name": turn3, "card": p2Card},
+            {"name": turn4, "card": p3Card}
+        ]
+    }
+    else if(rand === 1){
+        var changedCard = [
+            {"name": turn1, "card": p2Card},
+            {"name": turn2, "card": p3Card},
+            {"name": turn3, "card": p4Card},
+            {"name": turn4, "card": p1Card}
+        ]
+    }
+    else if(rand === 2){
+        var changedCard = [
+            {"name": turn1, "card": p3Card},
+            {"name": turn2, "card": p4Card},
+            {"name": turn3, "card": p1Card},
+            {"name": turn4, "card": p2Card}
+        ]
+    }
     return changedCard
 }
 

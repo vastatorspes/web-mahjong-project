@@ -37,12 +37,13 @@ class Rooms{
             playerHand.push(obj);
             currentDeck = currentDeck.slice(cards, currentDeck.length);
         });
+        var playerTurn = [players[0],players[1],players[2],players[3]]
         var currentTurn = players[0];
         var changeCard = 0;
         var chooseLack = 0;
         var roomField = [];
-        var roomChangeCard = [];
-        var roomState = {roomname, players, currentDeck, playerHand, currentTurn, changeCard, chooseLack, roomField, roomChangeCard}
+        var roomChangeCard= [];
+        var roomState = {roomname, players, currentDeck, playerHand, currentTurn, changeCard, chooseLack, roomField, roomChangeCard, playerTurn}
         return roomState;
     }
     
@@ -84,13 +85,7 @@ class Rooms{
         });
         return room
     }
-
-    getTopCard(roomname){
-        var room = this.getRoom(roomname);
-        var top = room.currentDeck[0];
-        return top
-    }
-
+    
     drawCard(name, roomname){
         var room = this.getRoom(roomname);
         var top = room.currentDeck[0];

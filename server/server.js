@@ -105,14 +105,34 @@ io.on('connection', (socket)=>{
     // end making room ----------------------------------------------------
     
     ////----------------------- EVENT 3. LISTEN CHANGE CARD -----------------------
+    // default change card
+    socket.on('cdChangeCard', (id,roomname)=>{
+        timer = setTimeout(()=>{
+            var room = rooms.getRoom(roomname); // ambil room
+            var cards = getPlayerHand(id,roomname).slice(0,3);
+            rooms.returnCards(roomname, id, cards);
+            room.changeCard++;
+
+            var playerHand = getPlayerHand(id,roomname);
+            socket.emit('dealCard', playerHand); // kasih kartu
+            players.updatePlayerHand(id, playerHand); // update player hand
+
+            if(room.changeCard === 4){
+                //----------------------- EVENT 4. EMIT AFTER CHANGE -----------------------
+                io.to(roomname).emit('afterChange', room.currentTurn);
+                rooms.returnChangeCard(roomname);
+                room.changeCard = 0;
+                console.log("changecard")
+            }
+        }, 20000)
+    })
+
     socket.on('changeCard', (id, params, cards, callback)=>{
+        clearTimeout(timer)
         var room = rooms.getRoom(params.Room); // ambil room
-        var roomState = rooms.returnCards(params.Room, params.Username, cards);
-        /*console.log(JSON.stringify(roomState, undefined, 2));
-        console.log('card returned')
-        console.log(cards);*/
+        rooms.returnCards(params.Room, id, cards);
         room.changeCard++;
-        console.log(JSON.stringify(room, undefined, 2));
+
         var playerHand = getPlayerHand(id,params.Room);
         socket.emit('dealCard', playerHand); // kasih kartu
         players.updatePlayerHand(id, playerHand); // update player hand
@@ -120,23 +140,37 @@ io.on('connection', (socket)=>{
         if(room.changeCard === 4){
             //----------------------- EVENT 4. EMIT AFTER CHANGE -----------------------
             io.to(params.Room).emit('afterChange', room.currentTurn);
-            var returnedCard = rooms.returnChangeCard(params.Room);
+            rooms.returnChangeCard(params.Room);
             room.changeCard = 0;
             callback();
         }
         console.log(JSON.stringify(rooms, undefined, 2));
     })
     ////----------------------- EVENT 5. LISTEN CHOOSE LACK -----------------------
+    // default change card
+    socket.on('cdChooseLack', (id,roomname)=>{
+        timer = setTimeout(()=>{
+            var room = rooms.getRoom(roomname);
+            var lackColor = Math.floor(Math.random() * 3);
+            players.updatePlayerLack(id, lackColor);
+            room.chooseLack++;
+            if(room.chooseLack === 4){
+                //----------------------- EVENT 6. EMIT AFTER LACK -----------------------
+                //io.to(roomname).emit('afterAction', room.currentTurn); ---------------------------- for production
+                room.chooseLack = 0;
+        }
+        }, 10000)
+    })
+
     socket.on('chooseLack', (id, roomname, lackColor, callback)=>{
+        clearTimeout(timer)
         var room = rooms.getRoom(roomname);
         players.updatePlayerLack(id, lackColor);
         callback("you choose lack "+lackColor);
         room.chooseLack++;
         if(room.chooseLack === 4){
             //----------------------- EVENT 6. EMIT AFTER LACK -----------------------
-            //io.to(roomname).emit('afterAction', room.currentTurn);
-            // console.log(room.currentTurn);
-            // console.log(players);
+            //io.to(roomname).emit('afterAction', room.currentTurn); ------------------------------ for production
             room.chooseLack = 0;
             callback();
         }
@@ -145,18 +179,31 @@ io.on('connection', (socket)=>{
     
     ////----------------------- EVENT 7. LISTEN DRAW CARD -----------------------
     socket.on('drawCard', (id, room, callback)=>{
-        var name = players.getPlayerName(id);
+        var getroom = rooms.getRoom(room); // ambil room
+        var name = players.getPlayerName(id);                //------------------------------------- for production
         var card = rooms.getTopCard(room);
         var playerHand = rooms.drawCard(name, room);
         socket.emit('dealCard', card); // tampilin kartu di frontend
         players.updatePlayerHand(id, playerHand); // update kartu ke player data
-        // console.log(players.getPlayer(id))
-        // console.log(JSON.stringify(rooms, undefined, 2));
         if (callback) {
             callback("you drew "+playerHand[playerHand.length-1]);
         }
         callback();
         
+        // DEFAULT THROW CARD ---------------------------------------------
+        timer = setTimeout(()=>{
+            console.log(getPlayerHand(id,room)[0])
+            var name = players.getPlayerName(id);
+            var card = getPlayerHand(id,room)[0]; //-============================================================ GANTI LOGICNYA
+            var playerHand = rooms.throwCard(name, room, card);
+            socket.emit('dealCard', playerHand); // tampilin kartu di frontend
+            players.updatePlayerHand(id, playerHand); // update kartu ke player data
+            rooms.changeTurn(name, room); //change turn
+            
+            //io.to(room).emit('afterAction', getroom.currentTurn); --------------------------------------- for production
+            //----------------------- EVENT 11. EMIT OTHERS THROW -----------------------
+            io.to(room).emit('othersThrow', name, card);
+        }, 10000)
     })
     
     ////----------------------- EVENT 8. LISTEN THROW CARD -----------------------
@@ -169,9 +216,9 @@ io.on('connection', (socket)=>{
         
         var room = rooms.getRoom(room); // ambil room
         console.log(room.currentTurn);
-        //io.to(room.roomname).emit('afterAction', room.currentTurn);
+        //io.to(room.roomname).emit('afterAction', room.currentTurn); -------------------------------------- for production
         //----------------------- EVENT 11. EMIT OTHERS THROW -----------------------
-        io.to(room.roomname).emit('othersThrow', name, card);
+        io.to(room).emit('othersThrow', name, card);
     });
     
     

@@ -6,9 +6,10 @@ class Players{
     addPlayer(id, name, room, hand, command,score){
         var hand = [];
         var lack = Number;
+        var door = [];
         var command = {};
         var score = 0;
-        var player = {id, name, room, hand, lack,command, score};
+        var player = {id, name, room, hand, lack, command, door, score};
         this.players.push(player);
         return player;
     }
