@@ -62,15 +62,6 @@ class Rooms{
         var room = this.rooms.find((r) => r.roomname === room);
         var playerHand = room.playerHand.find(x => x.name === name).hand;
         
-        // balikin kartu ke deck
-        // for (var i=0; i < card.length; i++){
-        //     var returnedCard = playerHand.find( c => c === card[i]);
-        //     room.currentDeck.push(returnedCard);
-        //     playerHand.splice(playerHand.indexOf(returnedCard),1);
-        //     playerHand.push(room.currentDeck[0]) // ngasih kartu dari deck
-        //     room.currentDeck.splice(0,1)
-        // }
-        
         for (var i=0; i < card.length; i++){
             var returnedCard = playerHand.find( c => c === card[i]);
             playerHand.splice(playerHand.indexOf(returnedCard),1);
