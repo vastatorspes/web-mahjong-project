@@ -189,6 +189,12 @@ io.on('connection', (socket)=>{
         var getroom = rooms.getRoom(room); // ambil room
         var name = players.getPlayerName(id);
         var playerHand = rooms.drawCard(name, room);
+        
+        if(playerHand == "gameEnd"){
+            io.to(room).emit('gameEnd');
+            return
+        }
+        
         socket.emit('dealCard', playerHand); // tampilin kartu di frontend
         players.updatePlayerHand(id, playerHand); // update kartu ke player data
         if (callback) {
@@ -196,8 +202,8 @@ io.on('connection', (socket)=>{
         }
         callback();
 
-        // Check Command
-        logic.checkCommand(playerHand)
+        // Check Command-------------------------------------------------------------------- wait Command Logic
+        var command = logic.checkCommand(playerHand)
         if(command != "none"){
             socket.emit('giveCommand', command)
         }
@@ -244,10 +250,13 @@ io.on('connection', (socket)=>{
     socket.on('getCommand', (id, room, callback)=>{
         var hand = players.getPlayerHand(id);
         var field = rooms.getRoom(room).roomField;
+
+        // Check Command-------------------------------------------------------------------- wait Command Logic
         var command = logic.checkCommand(hand, field);
         if(command != "none"){
             socket.emit('giveCommand', command)
         }
+
         //var obj = {command:cmd, card:card}
         //players.updatePlayerCommand(id, obj);
         //socket.emit('showCommand', obj); //kasih ke front end
@@ -258,7 +267,7 @@ io.on('connection', (socket)=>{
         var name = players.getPlayerName(id);
         var room = players.getPlayerRoom(id);
         var fromName = rooms.getRoom(room).roomField[0].name;
-        
+        players.updatePlayerDoor(id, card);
         players.updatePlayerScore(id, score);
         rooms.changeTurn(name, room); //change turn
         
@@ -267,7 +276,7 @@ io.on('connection', (socket)=>{
     })
     
     ////----------------------- EVENT 13. LISTEN END GAME -----------------------
-    socket.on('endGame', (room, result)=>{
+    socket.on('showResult', (room, result)=>{
         var player = players.getPlayerList(room);
         var result = [];
         player.forEach((p)=>{

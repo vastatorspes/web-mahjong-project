@@ -32,10 +32,17 @@ class Players{
         var player = this.getPlayer(id);
         player.command = command;
     }
+    
     updatePlayerScore(id, score){
         var player = this.getPlayer(id);
         player.score = score;
     }
+
+    updatePlayerDoor(id, cards){
+        var player = this.getPlayer(id);
+        player.door.unshift(cards)
+    }
+    
     removePlayer(id){
         var player = this.getPlayer(id);
         if (player){
