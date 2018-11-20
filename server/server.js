@@ -276,7 +276,7 @@ io.on('connection', (socket)=>{
     })
     
     ////----------------------- EVENT 13. LISTEN END GAME -----------------------
-    socket.on('showResult', (room, result)=>{
+    socket.on('showResult', (id, room, result)=>{
         var player = players.getPlayerList(room);
         var result = [];
         player.forEach((p)=>{
