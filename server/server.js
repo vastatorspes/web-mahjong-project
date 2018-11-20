@@ -259,7 +259,7 @@ io.on('connection', (socket)=>{
         var name = players.getPlayerName(id);
         var room = players.getPlayerRoom(id);
         var fromName = rooms.getRoom(room).roomField[0].name;
-        
+        players.updatePlayerDoor(id, card);
         players.updatePlayerScore(id, score);
         rooms.changeTurn(name, room); //change turn
         
