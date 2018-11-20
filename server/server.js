@@ -188,8 +188,14 @@ io.on('connection', (socket)=>{
     socket.on('drawCard', (id, room, callback)=>{
         var getroom = rooms.getRoom(room); // ambil room
         var name = players.getPlayerName(id);
-        var card = rooms.getTopCard(room);                  //------------------------------------- for production
         var playerHand = rooms.drawCard(name, room);
+        var card = rooms.getTopCard(room);                  //------------------------------------- for production
+        
+        if(playerHand == "gameEnd"){
+            io.to(room).emit('gameEnd');
+            return
+        }
+        
         socket.emit('dealCard', card); // tampilin kartu di frontend ------------------------------------- for production
         players.updatePlayerHand(id, playerHand); // update kartu ke player data
         if (callback) {
@@ -198,7 +204,7 @@ io.on('connection', (socket)=>{
         callback();
 
         // Check Command
-        logic.checkCommand(playerHand)
+        var command = logic.checkCommand(playerHand)
         if(command != "none"){
             socket.emit('giveCommand', command)
         }
@@ -268,7 +274,7 @@ io.on('connection', (socket)=>{
     })
     
     ////----------------------- EVENT 13. LISTEN END GAME -----------------------
-    socket.on('endGame', (room, result)=>{
+    socket.on('showResult', (room, result)=>{
         var player = players.getPlayerList(room);
         var result = [];
         player.forEach((p)=>{

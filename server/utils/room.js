@@ -94,6 +94,9 @@ class Rooms{
 
     drawCard(name, roomname){
         var room = this.getRoom(roomname);
+        if(room.currentDeck.length == 0){
+            return "gameEnd"
+        }
         var top = room.currentDeck[0];
         room.currentDeck.splice(0,1); // buang kartu paling atas di deck
         var playerHand = room.playerHand.find(x => x.name === name).hand;

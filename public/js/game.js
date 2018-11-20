@@ -120,7 +120,7 @@ socket.on('othersThrow', (name, card)=>{
 
     // ----------------------- EVENT 9. GET COMMAND-----------------------
     var params = jQuery.deparam(window.location.search);
-    socket.emit('getCommand', params.Username, params.Roomm, function(log){
+    socket.emit('getCommand', params.Username, params.Room, function(log){
         jQuery('#log').prepend(jQuery('<p></p>').text(log))
     });
 })
